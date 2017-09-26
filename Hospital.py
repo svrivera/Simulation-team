@@ -28,6 +28,9 @@ class Hospital:
         # Estadisticas
         self.pacientes_externalizados = []
         self.pacientes_dados_alta = []
+        self.dias_extra_c = 0
+        self.dias_extra_i = 0
+        self.pacientes_arribados = 0
 
         '''
         pacientes derivados
@@ -42,9 +45,9 @@ class Hospital:
         for i in range(n_criticas):
             self.camas_criticas.append(CamaCritica())
         for i in range(n_intermedias):
-            self.camas_criticas.append(CamaIntermedia())
+            self.camas_intermedias.append(CamaIntermedia())
         for i in range(n_basicas):
-            self.camas_criticas.append(CamaBasica())
+            self.camas_basicas.append(CamaBasica())
 
     # ---------------------------------------------------------------------------
 
@@ -113,7 +116,7 @@ class Hospital:
                 GRD_Circulatorio,
                 GRD_Intestinal]
         for grd in lista:
-            for i in range(poisson(1)):
+            for i in range(poisson(5)):
                 pacientes.append(Paciente(self.tiempo_actual, grd))
         shuffle(pacientes)
         return deque(pacientes)
@@ -143,6 +146,10 @@ class Hospital:
                 if cama.alta_medica:
                     paciente = cama.checkout()
                     pacientes_dados_alta_dia.append(paciente)
+
+                    # Aprovechamos de guardar estadísticas
+                    self.dias_extra_c += paciente.dias_extra_c
+                    self.dias_extra_i += paciente.dias_extra_i
 
             # ------------------------------------------------------------------
             # Tranferencias de Pacientes entre Camas
@@ -197,6 +204,10 @@ class Hospital:
 
             pacientes = self.pacientes_del_dia()
             while pacientes:
+
+                # Aumentamos en 1 el número de pacientes que llegan
+                self.pacientes_arribados += 1
+
                 paciente = pacientes.popleft()
                 if paciente.cama_inicial == "Critica":
                     camas_libres = self.camas_criticas_libres
@@ -252,7 +263,20 @@ class Hospital:
         s += "Simulación [{}]\n\n".format(self.id)
         s += "Tiempo de Simulación: {}\n".format(self.tiempo_CPU)
         s += "Días Simulados: {}\n".format(self.tiempo_simulacion)
-        s += "Tiempo Externalización Total: {}".format(sum(map(lambda x: sum(map(lambda y: y.costo_externalizacion, x)),
+        s += "Costo Externalización Total: {}\n".format(sum(map(lambda x: sum(map(lambda y: y.costo_externalizacion, x)),
                                                                self.pacientes_externalizados)))
-        s += "Cantidad de Pacientes Derivados: {}".format(sum(map(lambda x: len(x), self.pacientes_externalizados)))
+        s += "Cantidad de Pacientes Derivados: {}\n".format(sum(map(lambda x: len(x), self.pacientes_externalizados)))
+        s += "Cantidad de Pacientes dados de Alta: {}\n".format(sum(map(lambda x: len(x), self.pacientes_dados_alta)))
+
+        s += "Días Perdidos:\n"
+        s += "Días Totales Perdidos en Críticas: {}\n".format(self.dias_extra_c)
+        s += "Días Totales Perdidos en Intermedias: {}\n".format(self.dias_extra_i)
+        s += "Estado Sistema al finalizar\n"
+        s += "Cantidad de Camas Críticas Ocupadas: {}\n".format(len(self.camas_criticas_ocupadas))
+        s += "Cantidad de Camas Intermedias Ocupadas: {}\n".format(len(self.camas_intermedias_ocupadas))
+        s += "Cantidad de Camas Básicas Ocupadas: {}\n".format(len(self.camas_basicas_ocupadas))
+
+        # print(self.pacientes_arribados)
+        # print(len(self.camas_criticas_ocupadas))
+
         print(s)

@@ -43,11 +43,11 @@ class CamaCritica(Cama):
         paciente = self.paciente
         self.paciente = None
         if self.dias_recomendado >= 0:
-            paciente.dias_adelantado_c = self.dias_recomendado
-            paciente.dias_extra_c = 0
+            paciente.dias_adelantado_c += self.dias_recomendado
+            # paciente.dias_extra_c = 0
         else:
-            paciente.dias_adelantado_c = 0
-            paciente.dias_extra_c = abs(self.dias_recomendado)
+            # paciente.dias_adelantado_c = 0
+            paciente.dias_extra_c += abs(self.dias_recomendado)
         self.dias_recomendado = 0
         self.dias_minimos = 0
         return paciente
@@ -70,11 +70,11 @@ class CamaIntermedia(Cama):
         paciente = self.paciente
         self.paciente = None
         if self.dias_recomendado >= 0:
-            paciente.dias_adelantado_i = self.dias_recomendado
-            paciente.dias_extra_i = 0
+            paciente.dias_adelantado_i += self.dias_recomendado
+            # paciente.dias_extra_i = 0
         else:
-            paciente.dias_adelantado_i = 0
-            paciente.dias_extra_i = abs(self.dias_recomendado)
+            # paciente.dias_adelantado_i = 0
+            paciente.dias_extra_i += abs(self.dias_recomendado)
         self.dias_recomendado = 0
         self.dias_minimos = 0
         return paciente
