@@ -1,11 +1,6 @@
 from time import time
 from Cama import CamaCritica, CamaIntermedia, CamaBasica
-from Paciente import Paciente
-from GRDS import *
-from numpy.random import poisson
-from random import shuffle
-from collections import deque
-
+from Pacientes import pacientes_del_dia
 
 class Hospital:
 
@@ -101,28 +96,6 @@ class Hospital:
                       key = lambda x: x.tiempo_posible_penalizacion)[0]
 
     # ---------------------------------------------------------------------------
-    # Creación de la cola de Pacientes que llegan en el día
-
-    def pacientes_del_dia(self):
-        pacientes = []
-        lista = [GRD_Coronario,
-                GRD_Hepatico,
-                GRD_Respiratorio,
-                GRD_Renal,
-                GRD_Neurologico,
-                GRD_Traumatologico,
-                GRD_Esofagico,
-                GRD_Oftalmologico,
-                GRD_Circulatorio,
-                GRD_Intestinal]
-        for grd in lista:
-            for i in range(poisson(5)):
-                pacientes.append(Paciente(self.tiempo_actual, grd))
-        shuffle(pacientes)
-        return deque(pacientes)
-
-    # ---------------------------------------------------------------------------
-
 
     def run(self):
         tiempo_inicio = time()
@@ -202,7 +175,7 @@ class Hospital:
             Si hay una cama en el nivel pedido, se la da. Sino, se externaliza
             '''
 
-            pacientes = self.pacientes_del_dia()
+            pacientes = pacientes_del_dia(self.tiempo_actual)
             while pacientes:
 
                 # Aumentamos en 1 el número de pacientes que llegan
