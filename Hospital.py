@@ -1,6 +1,6 @@
 from time import time
 from Cama import CamaCritica, CamaIntermedia, CamaBasica
-from Pacientes import pacientes_del_dia
+from Pacientes import pacientes_del_dia, n_hepaticos
 
 class Hospital:
 
@@ -249,6 +249,7 @@ class Hospital:
         s += "Cantidad de Camas Intermedias Ocupadas: {}\n".format(len(self.camas_intermedias_ocupadas))
         s += "Cantidad de Camas Básicas Ocupadas: {}\n".format(len(self.camas_basicas_ocupadas))
 
+        # print(n_hepaticos())
         # print(self.pacientes_arribados)
         # print(len(self.camas_criticas_ocupadas))
 
