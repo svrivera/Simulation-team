@@ -91,6 +91,7 @@ class CamaIntermedia(Cama):
         self.dias_recomendado = paciente.dias_recomendado_intermedia + paciente.penalizacion_critica
 
 
+# Solo la cama básica puede dar de alta al paciente
 class CamaBasica(Cama):
     def __init__(self):
         super().__init__()

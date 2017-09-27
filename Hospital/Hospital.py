@@ -124,13 +124,12 @@ class Hospital:
             # Setup Inicial del dia
             pacientes_externalizados_dia = []
             pacientes_dados_alta_dia = []
-
             # ------------------------------------------------------------------
             # Dar de alta
 
             '''
             Política Actual:
-            Se da de alta cuando se terminan los días recomendados en el nivel básico
+            Primero se da de alta: Cuando se terminan los días recomendados en el nivel básico
             '''
 
             for cama in self.camas_basicas_ocupadas:
@@ -147,18 +146,19 @@ class Hospital:
 
             '''
             Política Actual:
-            Pacientes se quedan todo su tiempo recomendado, indpendiente de
+            Luego, los pacientes se quedan todo su tiempo recomendado, indpendiente de
             que lleguen a pasar más tiempo.
             PD: Los días extra son días perdidos
 
-            Para evitar MUERTE de camas, se intenta transferir a la que tenga
-            menor número de días recomendado (NUESTRO)
+            Para evitar Estanque de camas, se intenta transferir a la que tenga
+            menor número de días recomendado (Que haya pasado tiempo más cercano al recomendado)
             '''
 
             # Intermedios
             camas_ordenadas = sorted(self.camas_intermedias_ocupadas,
                                      key = lambda x: x.dias_recomendado)
             for cama_origen in camas_ordenadas:
+                # Si ya cumplió con los días recomendados
                 if cama_origen.dias_recomendado <= 0:
                     camas_libres = self.camas_basicas_libres
                     if len(camas_libres) > 0:
@@ -167,7 +167,10 @@ class Hospital:
                         paciente = cama_origen.checkout()
                         cama_destino.recibir_paciente(paciente)
                     else:
-                        # No hay camas libres en el próximo nivel
+                        # No hay camas libres en el nivel básico
+
+                        # Acá se debe agregar criterios de transferencia temprana de pacientes
+
                         break
 
             # Críticos
@@ -182,7 +185,15 @@ class Hospital:
                         paciente = cama_origen.checkout()
                         cama_destino.recibir_paciente(paciente)
                     else:
-                        # No hay camas libres en el próximo nivel
+                        # No hay camas libres en el nivel intermedio
+
+                        # Acá se debe agregar criterios de transferencia temprana de pacientes
+                        for cama_disponible in sorted(self.camas_intermedias_ocupadas,
+                                     key = lambda x: x.dias_recomendado):
+                            if len(self.camas_basicas_libres) > 0:
+
+
+
                         break
 
             # -------------------------------------------------------------------
