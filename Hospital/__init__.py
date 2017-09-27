@@ -1,1 +1,1 @@
-from Hospital import Hospital as Simulacion
+from .Hospital import Hospital as Simulacion

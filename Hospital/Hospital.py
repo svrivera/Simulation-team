@@ -1,6 +1,6 @@
 from time import time
-from Cama import CamaCritica, CamaIntermedia, CamaBasica
-from Pacientes import pacientes_del_dia, n_hepaticos
+from .Cama import CamaCritica, CamaIntermedia, CamaBasica
+from .Pacientes import pacientes_del_dia, n_hepaticos
 
 class Hospital:
 
