@@ -17,7 +17,7 @@ class Paciente():
 
     @property
     def ponderador_c(self):
-        return self.__GRD.ponderador_c    \
+        return self.__GRD.ponderador_c
 
     @property
     def ponderador_i(self):
