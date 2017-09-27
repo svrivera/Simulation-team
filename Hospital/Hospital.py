@@ -1,6 +1,9 @@
 from time import time
 from .Cama import CamaCritica, CamaIntermedia, CamaBasica
-from .Pacientes import pacientes_del_dia, n_hepaticos
+from .Pacientes import pacientes_del_dia, n_hepaticos, n_circulatorio, \
+    n_coronarios, n_esofagico, n_intestinal, n_neurologico, n_oftalmologico, \
+    n_renal, n_respiratorio, n_traumatologico
+
 
 class Hospital:
 

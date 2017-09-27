@@ -15,5 +15,16 @@ GRD_Oftalmologico = Oftalmologico()
 GRD_Circulatorio = Circulatorio()
 GRD_Intestinal = Intestinal()
 
+# Guardamos las funciones en un nombre más entendible
+
+n_coronarios = Coronario.get_contador
 n_hepaticos = Hepatico.get_contador
-# Faltan..
+n_respiratorio = Respiratorio.get_contador
+n_renal = Renal.get_contador
+n_neurologico = Neurologico.get_contador
+n_traumatologico = Traumatologico.get_contador
+n_esofagico = Esofagico.get_contador
+n_oftalmologico = Oftalmologico.get_contador
+n_circulatorio = Circulatorio.get_contador
+n_intestinal = Intestinal.get_contador
+
