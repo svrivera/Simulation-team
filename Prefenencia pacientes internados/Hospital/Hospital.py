@@ -188,11 +188,6 @@ class Hospital:
                         # No hay camas libres en el nivel intermedio
 
                         # Acá se debe agregar criterios de transferencia temprana de pacientes
-                        for cama_disponible in sorted(self.camas_intermedias_ocupadas,
-                                     key = lambda x: x.dias_recomendado):
-                            if len(self.camas_basicas_libres) > 0:
-
-
 
                         break
 
