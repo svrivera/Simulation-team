@@ -17,8 +17,9 @@ def pacientes_del_dia(tiempo_actual):
              GRD_Oftalmologico,
              GRD_Circulatorio,
              GRD_Intestinal]
+    
     for grd in lista:
-        for i in range(poisson(1)):
+        for i in range(poisson(grd.tasa_llegada)):
             pacientes.append(Paciente(tiempo_actual, grd))
     shuffle(pacientes)
     return deque(pacientes)
