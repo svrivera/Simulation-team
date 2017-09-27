@@ -1,4 +1,6 @@
-__author__ = "Ale, Seba y Benja <3"
+"""Tiene un paciente y cuando este llega se actualizan los parámetros dias_minimo y recomendados, luego con cada día de
+    simulación que pasa, se le resta a los días"""
+
 
 class Cama:
     def __init__(self):
@@ -6,9 +8,10 @@ class Cama:
         self.dias_minimos = 0
         self.dias_recomendado = 0
 
-        self.reservada_hasta = 0  # todavía no lo usamos
+        self.reservada_hasta = 0  # Actualmente sin uso
 
-    # Lo podemos usar más adelante con una política
+    # Lo siguiente puede ser útil para asignar políticas:
+    # ---------------------------------------------------
     @property
     def reservada(self):
         return self.reservada_hasta > 0
@@ -16,6 +19,8 @@ class Cama:
     @property
     def libre(self):
         return self.paciente is None
+
+    # ---------------------------------------------------
 
     @property
     def trasferible(self):
@@ -30,6 +35,7 @@ class Cama:
         self.dias_recomendado -= 1
 
 
+# Cada tipo de cama va asignada a una etapa del tratamiento del paciente
 class CamaCritica(Cama):
 
     def __init__(self):

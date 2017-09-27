@@ -1,8 +1,7 @@
 from .GRD import *
 
 
-# Abrir archivo e instanciar las cosas con los valores respectivos
-
+# Abrimos el archivo e instanciar los parámetros con los valores respectivos para cada GRD
 
 GRD_Coronario = Coronario(nombre="Coronario", tiempo_recomendado=(3, 4, 4), tiempo_minimo=(1, 2, 4), ponderador_c=3,
                           ponderador_i=3, costo=7.53, tasa=5.288)
@@ -16,8 +15,8 @@ GRD_Oftalmologico = Oftalmologico("Oftalmologico", (0, 2, 1), (0, 1, 1), 0, 1, 2
 GRD_Circulatorio = Circulatorio("Circulatorio", (2, 2, 1), (1, 1, 1), 2, 2, 2.82, tasa=5.237)
 GRD_Intestinal = Intestinal("Intestinal", (0, 4, 4), (0, 2, 4), 0, 2, 5.25, tasa=4.985)
 
-# Guardamos las funciones en un nombre más entendible
 
+# Creamos los contadores de cada GRD atendido
 n_coronarios = Coronario.get_contador
 n_hepaticos = Hepatico.get_contador
 n_respiratorio = Respiratorio.get_contador
@@ -29,5 +28,4 @@ n_oftalmologico = Oftalmologico.get_contador
 n_circulatorio = Circulatorio.get_contador
 n_intestinal = Intestinal.get_contador
 
-# Cargamos las tasas de llegada de cada GRD
 

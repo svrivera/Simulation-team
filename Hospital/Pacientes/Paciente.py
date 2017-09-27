@@ -1,4 +1,5 @@
-class Paciente():
+#Creamos la clase Paciente, que es como un puente entre tipo_GRD y la cama (Por eso son puras properties)
+class Paciente:
 
     def __init__(self, fecha_ingreso, GRD):
         self.fecha_ingreso = fecha_ingreso
@@ -9,7 +10,7 @@ class Paciente():
         self.dias_extra_c = 0
 
         self.dias_adelantado_i = 0
-        self.dias_extra_i =  0
+        self.dias_extra_i = 0
 
     @property
     def costo_externalizacion(self):
@@ -67,5 +68,6 @@ class Paciente():
             return "Intermedia"
         return "Basica"
 
+    @property
     def estadia_hospital(self, dia_actual):
         return dia_actual - self.fecha_ingreso

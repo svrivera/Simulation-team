@@ -98,7 +98,22 @@ class Hospital:
         return sorted(self.camas_intermedias_transferible,
                       key = lambda x: x.tiempo_posible_penalizacion)[0]
 
-    # ---------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------
+    # creamos los parametros:
+    @property
+    def costo_externalizacion(self):
+        return sum(map(lambda x: sum(map(lambda y: y.costo_externalizacion, x)),
+                                                               self.pacientes_externalizados))
+
+    @property
+    def pacientes_derivados(self):
+        return sum(map(lambda x: len(x), self.pacientes_externalizados))
+
+    @property
+    def altas_dadas(self):
+        return sum(map(lambda x: len(x), self.pacientes_dados_alta))
+
+    # ----------------------------------------------------------------------------
 
     def run(self):
         tiempo_inicio = time()
@@ -231,18 +246,16 @@ class Hospital:
         # Termino Simulacion
 
         self.tiempo_CPU = time() - tiempo_inicio
-
-        self.show_estadistica()
+        #self.show_estadistica()
 
     def show_estadistica(self):
         s = ""
         s += "Simulación [{}]\n\n".format(self.id)
         s += "Tiempo de Simulación: {}\n".format(self.tiempo_CPU)
         s += "Días Simulados: {}\n".format(self.tiempo_simulacion)
-        s += "Costo Externalización Total: {}\n".format(sum(map(lambda x: sum(map(lambda y: y.costo_externalizacion, x)),
-                                                               self.pacientes_externalizados)))
-        s += "Cantidad de Pacientes Derivados: {}\n".format(sum(map(lambda x: len(x), self.pacientes_externalizados)))
-        s += "Cantidad de Pacientes dados de Alta: {}\n".format(sum(map(lambda x: len(x), self.pacientes_dados_alta)))
+        s += "Costo Externalización Total: {}\n".format(self.costo_externalizacion)
+        s += "Cantidad de Pacientes Derivados: {}\n".format(self.pacientes_derivados)
+        s += "Cantidad de Pacientes dados de Alta: {}\n".format(self.altas_dadas)
 
         s += "Días Perdidos:\n"
         s += "Días Totales Perdidos en Críticas: {}\n".format(self.dias_extra_c)
@@ -251,9 +264,7 @@ class Hospital:
         s += "Cantidad de Camas Críticas Ocupadas: {}\n".format(len(self.camas_criticas_ocupadas))
         s += "Cantidad de Camas Intermedias Ocupadas: {}\n".format(len(self.camas_intermedias_ocupadas))
         s += "Cantidad de Camas Básicas Ocupadas: {}\n".format(len(self.camas_basicas_ocupadas))
-
         # print(n_hepaticos())
         # print(self.pacientes_arribados)
         # print(len(self.camas_criticas_ocupadas))
-
         print(s)

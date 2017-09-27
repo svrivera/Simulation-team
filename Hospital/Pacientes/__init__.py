@@ -5,9 +5,10 @@ from collections import deque
 from numpy.random import poisson
 
 
+# Creamos los pacientes que llegarán al hospital cada día
 def pacientes_del_dia(tiempo_actual):
     pacientes = []
-    lista = [GRD_Coronario,
+    lista_GRD = [GRD_Coronario,
              GRD_Hepatico,
              GRD_Respiratorio,
              GRD_Renal,
@@ -17,8 +18,8 @@ def pacientes_del_dia(tiempo_actual):
              GRD_Oftalmologico,
              GRD_Circulatorio,
              GRD_Intestinal]
-    
-    for grd in lista:
+
+    for grd in lista_GRD:
         for i in range(poisson(grd.tasa_llegada)):
             pacientes.append(Paciente(tiempo_actual, grd))
     shuffle(pacientes)

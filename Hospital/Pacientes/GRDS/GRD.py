@@ -1,3 +1,4 @@
+#Creamos la clase GRD
 class GRD:
     _id = 0
 
@@ -14,6 +15,7 @@ class GRD:
         cls.contador += 1
 
 
+# Cada tipo de GRD hereda de GRD, los atributos se obtienen de GRDS/__init__.py
 class Coronario(GRD):
     contador = 0
 
