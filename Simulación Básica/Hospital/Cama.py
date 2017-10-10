@@ -5,35 +5,34 @@
 class Cama:
     def __init__(self):
         self.paciente = None
-        self.dias_minimos = 0
-        self.dias_recomendado = 0
-
-        self.reservada_hasta = 0  # Actualmente sin uso
 
     # Lo siguiente puede ser útil para asignar políticas:
     # ---------------------------------------------------
-    @property
-    def reservada(self):
-        return self.reservada_hasta > 0
 
     @property
     def libre(self):
         return self.paciente is None
 
-    # ---------------------------------------------------
-
     @property
-    def trasferible(self):
-        return self.dias_minimos <= 0
+    def ocupada(self):
+        return self.paciente is not None
+
+    # ---------------------------------------------------
 
     @property
     def enfermedad(self):
         return self.paciente.enfermedad
 
+    @property
+    def alta_medica(self):
+        return self.paciente.tratamiento_restante <= 0
+
     def pasar_dia(self):
         self.dias_minimos -= 1
-        self.dias_recomendado -= 1
+        self.dias_recomendados -= 1
 
+    def recibir_paciente(self, paciente):
+        self.paciente = paciente
 
 # Cada tipo de cama va asignada a una etapa del tratamiento del paciente
 class CamaCritica(Cama):
@@ -42,54 +41,71 @@ class CamaCritica(Cama):
         super().__init__()
 
     @property
-    def tiempo_posible_penalizacion(self):
-        return self.dias_recomendado * self.paciente.ponderador_c
+    def dias_minimos(self):
+        return self.paciente.dias_minimos_c
+
+    @dias_minimos.setter
+    def dias_minimos(self, value):
+        self.paciente.dias_minimos_c = value
+
+    @property
+    def dias_recomendados(self):
+        return self.paciente.dias_recomendados_c
+
+    @dias_recomendados.setter
+    def dias_recomendados(self, value):
+        self.paciente.dias_recomendados_c = value
+
+    @property
+    def transferible(self):
+        return self.paciente.dias_minimos_c <= 0
 
     def checkout(self):
         paciente = self.paciente
-        self.paciente = None
-        if self.dias_recomendado >= 0:
-            paciente.dias_adelantado_c += self.dias_recomendado
-            # paciente.dias_extra_c = 0
+
+        if self.dias_recomendados >= 0:
+            paciente.dias_adelantado_c = self.dias_recomendados
         else:
-            # paciente.dias_adelantado_c = 0
-            paciente.dias_extra_c += abs(self.dias_recomendado)
-        self.dias_recomendado = 0
-        self.dias_minimos = 0
+            #sasaasasas
+            paciente.dias_extra_c = abs(self.dias_recomendados)
+        self.paciente = None
         return paciente
-
-    def recibir_paciente(self, paciente):
-        self.paciente = paciente
-        self.dias_minimos = paciente.dias_minimo_critica
-        self.dias_recomendado = paciente.dias_recomendado_critica
-
 
 class CamaIntermedia(Cama):
     def __init__(self):
         super().__init__()
 
     @property
-    def tiempo_posible_penalizacion(self):
-        return self.dias_recomendado * self.paciente.ponderador_i
+    def dias_minimos(self):
+        return self.paciente.dias_minimos_i
+
+    @dias_minimos.setter
+    def dias_minimos(self, value):
+        self.paciente.dias_minimos_i = value
+
+    @property
+    def dias_recomendados(self):
+        return self.paciente.dias_recomendados_i
+
+    @dias_recomendados.setter
+    def dias_recomendados(self, value):
+        self.paciente.dias_recomendados_i = value
+
+    @property
+    def transferible(self):
+        return self.paciente.dias_minimos_i <= 0
 
     def checkout(self):
         paciente = self.paciente
-        self.paciente = None
-        if self.dias_recomendado >= 0:
-            paciente.dias_adelantado_i += self.dias_recomendado
+
+        if self.dias_recomendados >= 0:
+            paciente.dias_adelantado_i += self.dias_recomendados
             # paciente.dias_extra_i = 0
         else:
             # paciente.dias_adelantado_i = 0
-            paciente.dias_extra_i += abs(self.dias_recomendado)
-        self.dias_recomendado = 0
-        self.dias_minimos = 0
+            paciente.dias_extra_i += abs(self.dias_recomendados)
+        self.paciente = None
         return paciente
-
-    def recibir_paciente(self, paciente):
-        self.paciente = paciente
-        self.dias_minimos = paciente.dias_minimo_intermedia + paciente.penalizacion_critica
-        self.dias_recomendado = paciente.dias_recomendado_intermedia + paciente.penalizacion_critica
-
 
 # Solo la cama básica puede dar de alta al paciente
 class CamaBasica(Cama):
@@ -97,19 +113,25 @@ class CamaBasica(Cama):
         super().__init__()
 
     @property
-    def alta_medica(self):
-        return self.dias_recomendado <= 0
+    def dias_minimos(self):
+        return self.paciente.dias_minimos_b
+
+    @dias_minimos.setter
+    def dias_minimos(self, value):
+        self.paciente.dias_minimos_b = value
+
+    @property
+    def dias_recomendados(self):
+        return self.paciente.dias_recomendados_b
+
+    @dias_recomendados.setter
+    def dias_recomendados(self, value):
+        self.paciente.dias_recomendados_b = value
 
     def checkout(self):
-        self.dias_minimos = 0
-        self.dias_recomendado = 0
         paciente = self.paciente
         self.paciente = None
         return paciente
 
-    def recibir_paciente(self, paciente):
-        self.paciente = paciente
-        self.dias_minimos = paciente.dias_minimo_basica + paciente.penalizacion_intermedia
-        self.dias_recomendado = paciente.dias_recomendado_basica + paciente.penalizacion_intermedia
-
-
+    def pasar_dia(self):
+        self.dias_recomendados -= 1

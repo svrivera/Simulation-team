@@ -3,25 +3,77 @@ class Paciente:
 
     def __init__(self, fecha_ingreso, GRD):
         self.fecha_ingreso = fecha_ingreso
+
         self.__GRD = GRD
-        self.__GRD.aumentar_contador()
+        GRD.aumentar_contador()
 
-        self.dias_adelantado_c = 0
-        self.dias_extra_c = 0
+        self.dias_recomendados_c = GRD.tiempo_recomendado[0]
+        self.dias_recomendados_i = GRD.tiempo_recomendado[1]
+        self.dias_recomendados_b = GRD.tiempo_recomendado[2]
 
-        self.dias_adelantado_i = 0
+        self.dias_minimos_c = GRD.tiempo_minimo[0]
+        self.dias_minimos_i = GRD.tiempo_minimo[1]
+
+        self.__dias_adelantado_c = 0
+        self.__dias_extra_c = 0
+
+        self.__dias_adelantado_i = 0
         self.dias_extra_i = 0
+
+
+    @property
+    def dias_extra_c(self):
+        return self.__dias_extra_c
+
+    @dias_extra_c.setter
+    def dias_extra_c(self, value):
+        self.__dias_extra_c = value
+        # asdasdasdas
+
+    @property
+    def dias_adelantado_c(self):
+        return self.__dias_adelantado_c
+
+    @dias_adelantado_c.setter
+    def dias_adelantado_c(self, value):
+        if value > 0:
+            self.__dias_adelantado_c = value
+            self.dias_recomendados_i += value + self.penalizacion_c
+            self.dias_recomendados_c = 0
+        else:
+            self.__dias_adelantado_c = value
+
+    @property
+    def dias_adelantado_i(self):
+        return self.__dias_adelantado_i
+
+    @dias_adelantado_i.setter
+    def dias_adelantado_i(self, value):
+        if value > 0:
+            self.__dias_adelantado_i = value
+            self.dias_recomendados_b += value + self.penalizacion_i
+            self.dias_recomendados_i = 0
+        else:
+            self.__dias_adelantado_i = value
+
+    @property
+    def dias_minimos_b(self):
+        return self.dias_recomendados_b
+
+    @property
+    def tratamiento_restante(self):
+        return self.dias_recomendados_c + self.dias_recomendados_i + self.dias_recomendados_b
 
     @property
     def costo_externalizacion(self):
         return self.__GRD.costo_externalizacion
 
     @property
-    def ponderador_c(self):
+    def penalizacion_c(self):
         return self.__GRD.ponderador_c
 
     @property
-    def ponderador_i(self):
+    def penalizacion_i(self):
         return self.__GRD.ponderador_i
 
     @property
@@ -29,45 +81,12 @@ class Paciente:
         return self.__GRD.nombre
 
     @property
-    def penalizacion_critica(self):
-        return self.dias_adelantado_c * self.ponderador_c
-
-    @property
-    def penalizacion_intermedia(self):
-        return self.dias_adelantado_i * self.ponderador_i
-
-    @property
-    def dias_minimo_critica(self):
-        return self.__GRD.tiempo_minimo[0]
-
-    @property
-    def dias_minimo_intermedia(self):
-        return self.__GRD.tiempo_minimo[1]
-
-    @property
-    def dias_minimo_basica(self):
-        return self.__GRD.tiempo_minimo[2]
-
-    @property
-    def dias_recomendado_critica(self):
-        return self.__GRD.tiempo_recomendado[0]
-
-    @property
-    def dias_recomendado_intermedia(self):
-        return self.__GRD.tiempo_recomendado[1]
-
-    @property
-    def dias_recomendado_basica(self):
-        return self.__GRD.tiempo_recomendado[2]
-
-    @property
-    def cama_inicial(self):
-        if self.dias_recomendado_critica > 0:
+    def cama_necesitada(self):
+        if self.dias_minimos_c > 0:
             return "Critica"
-        if self.dias_recomendado_intermedia > 0:
+        elif self.dias_minimos_i > 0:
             return "Intermedia"
         return "Basica"
 
-    @property
     def estadia_hospital(self, dia_actual):
         return dia_actual - self.fecha_ingreso

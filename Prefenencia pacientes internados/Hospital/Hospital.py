@@ -188,7 +188,13 @@ class Hospital:
                         # No hay camas libres en el nivel intermedio
 
                         # Acá se debe agregar criterios de transferencia temprana de pacientes
-
+                        camas_intermedias_ordenadas = sorted(self.camas_intermedias_ocupadas,
+                                                 key=lambda x: x.dias_recomendado)
+                        if len(camas_intermedias_ordenadas) > 0:
+                            if camas_intermedias_ordenadas[0].transferible:
+                                cama_destino = camas_intermedias_ordenadas[0]
+                                paciente = cama_origen.checkout()
+                                cama_destino.recibir_paciente(paciente)
                         break
 
             # -------------------------------------------------------------------
@@ -204,7 +210,7 @@ class Hospital:
 
                 # Aumentamos en 1 el número de pacientes que llegan
                 self.pacientes_arribados += 1
-
+                # Llega el paciente
                 paciente = pacientes.popleft()
                 if paciente.cama_inicial == "Critica":
                     camas_libres = self.camas_criticas_libres

@@ -23,7 +23,7 @@ class Cama:
     # ---------------------------------------------------
 
     @property
-    def trasferible(self):
+    def transferible(self):
         return self.dias_minimos <= 0
 
     @property

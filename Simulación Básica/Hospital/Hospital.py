@@ -25,7 +25,12 @@ class Hospital:
 
         # Estadisticas
         self.pacientes_externalizados = []
-        self.pacientes_dados_alta = []
+
+        self.dados_alta_critica = []
+        self.dados_alta_intermedia = []
+        self.dados_alta_basica = []
+
+
         self.dias_extra_c = 0
         self.dias_extra_i = 0
         self.pacientes_arribados = 0
@@ -46,6 +51,15 @@ class Hospital:
             self.camas_intermedias.append(CamaIntermedia())
         for i in range(n_basicas):
             self.camas_basicas.append(CamaBasica())
+
+    # ---------------------------------------------------------------------------
+
+    @property
+    def camas_a_dar_de_alta(self):
+        l1 = list(filter(lambda x: x.alta_medica, self.camas_criticas_ocupadas))
+        l2 = list(filter(lambda x: x.alta_medica, self.camas_intermedias_ocupadas))
+        l3 = list(filter(lambda x: x.alta_medica, self.camas_basicas_ocupadas))
+        return l1 + l2 + l3
 
     # ---------------------------------------------------------------------------
 
@@ -85,33 +99,24 @@ class Hospital:
     def camas_intermedias_transferible(self):
         return list(filter(lambda x: x.transferible, self.camas_intermedias_ocupadas))
 
-    # ---------------------------------------------------------------------------
-#####  Política: Mejor cama para transferir es la que da menos penalización
-
-    @property
-    def mejor_cama_critica_trasferible(self):
-        return sorted(self.camas_criticas_transferible,
-                      key = lambda x: x.tiempo_posible_penalizacion)[0]
-
-    @property
-    def mejor_cama_intermedia_trasferible(self):
-        return sorted(self.camas_intermedias_transferible,
-                      key = lambda x: x.tiempo_posible_penalizacion)[0]
 
     # ----------------------------------------------------------------------------
     # creamos los parametros:
+
     @property
     def costo_externalizacion(self):
         return sum(map(lambda x: sum(map(lambda y: y.costo_externalizacion, x)),
                                                                self.pacientes_externalizados))
-
     @property
     def pacientes_derivados(self):
         return sum(map(lambda x: len(x), self.pacientes_externalizados))
 
     @property
     def altas_dadas(self):
-        return sum(map(lambda x: len(x), self.pacientes_dados_alta))
+        return sum(map(lambda x: len(x), self.dados_alta_critica)) + \
+               sum(map(lambda x: len(x), self.dados_alta_intermedia)) + \
+               sum(map(lambda x: len(x), self.dados_alta_basica))
+
 
     # ----------------------------------------------------------------------------
 
@@ -123,7 +128,9 @@ class Hospital:
             # -------------------------------------------------------------------
             # Setup Inicial del dia
             pacientes_externalizados_dia = []
-            pacientes_dados_alta_dia = []
+            dados_alta_critica = []
+            dados_alta_intermedia = []
+            dados_alta_basica = []
             # ------------------------------------------------------------------
             # Dar de alta
 
@@ -132,14 +139,26 @@ class Hospital:
             Primero se da de alta: Cuando se terminan los días recomendados en el nivel básico
             '''
 
-            for cama in self.camas_basicas_ocupadas:
-                if cama.alta_medica:
-                    paciente = cama.checkout()
-                    pacientes_dados_alta_dia.append(paciente)
+            for cama in self.camas_a_dar_de_alta:
+                paciente = cama.checkout()
 
-                    # Aprovechamos de guardar estadísticas
-                    self.dias_extra_c += paciente.dias_extra_c
-                    self.dias_extra_i += paciente.dias_extra_i
+                if isinstance(cama, CamaCritica):
+                    dados_alta_critica.append(paciente)
+
+                elif isinstance(cama, CamaIntermedia):
+                    dados_alta_intermedia.append(paciente)
+
+                elif isinstance(cama, CamaBasica):
+                    dados_alta_basica.append(paciente)
+
+                else:
+                    raise Exception("Ta la cagaa")
+
+                # Aprovechamos de guardar estadísticas
+                self.dias_extra_c += paciente.dias_extra_c
+                self.dias_extra_i += paciente.dias_extra_i
+
+
 
             # ------------------------------------------------------------------
             # Tranferencias de Pacientes entre Camas
@@ -156,10 +175,10 @@ class Hospital:
 
             # Intermedios
             camas_ordenadas = sorted(self.camas_intermedias_ocupadas,
-                                     key = lambda x: x.dias_recomendado)
+                                     key = lambda x: x.dias_recomendados)
             for cama_origen in camas_ordenadas:
                 # Si ya cumplió con los días recomendados
-                if cama_origen.dias_recomendado <= 0:
+                if cama_origen.dias_recomendados <= 0:
                     camas_libres = self.camas_basicas_libres
                     if len(camas_libres) > 0:
                         # Si hay camas, tomo la primera
@@ -175,14 +194,16 @@ class Hospital:
 
             # Críticos
             camas_ordenadas = sorted(self.camas_criticas_ocupadas,
-                                     key=lambda x: x.dias_recomendado)
+                                     key=lambda x: x.dias_recomendados)
+
             for cama_origen in camas_ordenadas:
-                if cama_origen.dias_recomendado <= 0:
+                if cama_origen.dias_recomendados <= 0:
                     camas_libres = self.camas_intermedias_libres
                     if len(camas_libres) > 0:
                         # Si hay camas, tomo la primera
                         cama_destino = camas_libres[0]
                         paciente = cama_origen.checkout()
+
                         cama_destino.recibir_paciente(paciente)
                     else:
                         # No hay camas libres en el nivel intermedio
@@ -206,7 +227,7 @@ class Hospital:
                 self.pacientes_arribados += 1
 
                 paciente = pacientes.popleft()
-                if paciente.cama_inicial == "Critica":
+                if paciente.cama_necesitada == "Critica":
                     camas_libres = self.camas_criticas_libres
                     if len(camas_libres) > 0:
                         # Si hay camas, tomo la primera
@@ -215,7 +236,7 @@ class Hospital:
                     else:
                         # Si no hay camas libres, se externaliza
                         pacientes_externalizados_dia.append(paciente)
-                elif paciente.cama_inicial == "Intermedia":
+                elif paciente.cama_necesitada == "Intermedia":
                     camas_libres = self.camas_intermedias_libres
                     if len(camas_libres) > 0:
                         # Si hay camas, tomo la primera
@@ -246,7 +267,9 @@ class Hospital:
                 cama.pasar_dia()
 
             self.pacientes_externalizados.append(pacientes_externalizados_dia)
-            self.pacientes_dados_alta.append(pacientes_dados_alta_dia)
+            self.dados_alta_critica.append(dados_alta_critica)
+            self.dados_alta_intermedia.append(dados_alta_intermedia)
+            self.dados_alta_basica.append(dados_alta_basica)
 
         # ------------------------------------------------------------------
         # Termino Simulacion
