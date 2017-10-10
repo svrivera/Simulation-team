@@ -20,6 +20,10 @@ class Cama:
     # ---------------------------------------------------
 
     @property
+    def siguiente_cama(self):
+        return self.paciente.cama_necesitada
+
+    @property
     def enfermedad(self):
         return self.paciente.enfermedad
 
@@ -62,12 +66,7 @@ class CamaCritica(Cama):
 
     def checkout(self):
         paciente = self.paciente
-
-        if self.dias_recomendados >= 0:
-            paciente.dias_adelantado_c = self.dias_recomendados
-        else:
-            #sasaasasas
-            paciente.dias_extra_c = abs(self.dias_recomendados)
+        paciente.dias_adelantado_c = self.dias_recomendados
         self.paciente = None
         return paciente
 
@@ -97,13 +96,7 @@ class CamaIntermedia(Cama):
 
     def checkout(self):
         paciente = self.paciente
-
-        if self.dias_recomendados >= 0:
-            paciente.dias_adelantado_i += self.dias_recomendados
-            # paciente.dias_extra_i = 0
-        else:
-            # paciente.dias_adelantado_i = 0
-            paciente.dias_extra_i += abs(self.dias_recomendados)
+        paciente.dias_adelantado_i += self.dias_recomendados
         self.paciente = None
         return paciente
 

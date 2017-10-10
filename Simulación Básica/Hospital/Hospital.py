@@ -35,6 +35,8 @@ class Hospital:
         self.dias_extra_i = 0
         self.pacientes_arribados = 0
 
+        self.disponibilidad = []
+
         '''
         pacientes derivados
         pacientes atendidos de cada tipo
@@ -112,10 +114,16 @@ class Hospital:
         return sum(map(lambda x: len(x), self.pacientes_externalizados))
 
     @property
-    def altas_dadas(self):
-        return sum(map(lambda x: len(x), self.dados_alta_critica)) + \
-               sum(map(lambda x: len(x), self.dados_alta_intermedia)) + \
-               sum(map(lambda x: len(x), self.dados_alta_basica))
+    def altas_dadas_critica(self):
+        return sum(map(lambda x: len(x), self.dados_alta_critica))
+
+    @property
+    def altas_dadas_intermedia(self):
+        return sum(map(lambda x: len(x), self.dados_alta_intermedia))
+
+    @property
+    def altas_dadas_basica(self):
+        return sum(map(lambda x: len(x), self.dados_alta_basica))
 
 
     # ----------------------------------------------------------------------------
@@ -178,7 +186,7 @@ class Hospital:
                                      key = lambda x: x.dias_recomendados)
             for cama_origen in camas_ordenadas:
                 # Si ya cumplió con los días recomendados
-                if cama_origen.dias_recomendados <= 0:
+                if cama_origen.transferible:
                     camas_libres = self.camas_basicas_libres
                     if len(camas_libres) > 0:
                         # Si hay camas, tomo la primera
@@ -197,8 +205,15 @@ class Hospital:
                                      key=lambda x: x.dias_recomendados)
 
             for cama_origen in camas_ordenadas:
-                if cama_origen.dias_recomendados <= 0:
-                    camas_libres = self.camas_intermedias_libres
+                if cama_origen.transferible:
+
+                    if cama_origen.siguiente_cama == "Intermedia":
+                        camas_libres = self.camas_intermedias_libres
+                    elif cama_origen.siguiente_cama == "Basica":
+                        camas_libres = self.camas_basicas_libres
+                    else:
+                        raise Exception("Cama solicitada no existe")
+
                     if len(camas_libres) > 0:
                         # Si hay camas, tomo la primera
                         cama_destino = camas_libres[0]
@@ -271,6 +286,13 @@ class Hospital:
             self.dados_alta_intermedia.append(dados_alta_intermedia)
             self.dados_alta_basica.append(dados_alta_basica)
 
+            ##Nuevas
+
+            dis_critica = (len(self.camas_criticas_libres) * 100) / len(self.camas_criticas)
+            dis_intermedia = (len(self.camas_intermedias_libres) * 100) / len(self.camas_intermedias)
+            dis_basica = (len(self.camas_basicas_libres) * 100) / len(self.camas_basicas)
+            self.disponibilidad.append((dis_critica, dis_intermedia, dis_basica))
+
         # ------------------------------------------------------------------
         # Termino Simulacion
 
@@ -296,4 +318,6 @@ class Hospital:
         # print(n_hepaticos())
         # print(self.pacientes_arribados)
         # print(len(self.camas_criticas_ocupadas))
+
+
         print(s)

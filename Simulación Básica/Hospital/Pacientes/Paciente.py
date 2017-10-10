@@ -7,28 +7,43 @@ class Paciente:
         self.__GRD = GRD
         GRD.aumentar_contador()
 
-        self.dias_recomendados_c = GRD.tiempo_recomendado[0]
-        self.dias_recomendados_i = GRD.tiempo_recomendado[1]
+        self.__dias_recomendados_c = GRD.tiempo_recomendado[0]
+        self.__dias_recomendados_i = GRD.tiempo_recomendado[1]
         self.dias_recomendados_b = GRD.tiempo_recomendado[2]
 
         self.dias_minimos_c = GRD.tiempo_minimo[0]
         self.dias_minimos_i = GRD.tiempo_minimo[1]
 
         self.__dias_adelantado_c = 0
-        self.__dias_extra_c = 0
+        self.dias_extra_c = 0
 
         self.__dias_adelantado_i = 0
         self.dias_extra_i = 0
 
+    @property
+    def dias_recomendados_c(self):
+        return self.__dias_recomendados_c
+
+    @dias_recomendados_c.setter
+    def dias_recomendados_c(self, value): #-1
+        if value >= 0:
+            self.__dias_recomendados_c = value
+        else:
+            self.dias_extra_c += 1
+            self.dias_recomendados_i -= 1
+            self.dias_minimos_i -= 1
 
     @property
-    def dias_extra_c(self):
-        return self.__dias_extra_c
+    def dias_recomendados_i(self):
+        return self.__dias_recomendados_i
 
-    @dias_extra_c.setter
-    def dias_extra_c(self, value):
-        self.__dias_extra_c = value
-        # asdasdasdas
+    @dias_recomendados_i.setter
+    def dias_recomendados_i(self, value):
+        if value >= 0:
+            self.__dias_recomendados_i = value
+        else:
+            self.dias_extra_i += 1
+            self.dias_recomendados_b -= 1
 
     @property
     def dias_adelantado_c(self):
