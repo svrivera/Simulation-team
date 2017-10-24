@@ -62,7 +62,7 @@ class CamaCritica(Cama):
 
     @property
     def transferible(self):
-        return self.paciente.dias_minimos_c <= 0
+        return self.paciente.dias_recomendados_c <= 0
 
     def checkout(self):
         paciente = self.paciente
@@ -92,7 +92,7 @@ class CamaIntermedia(Cama):
 
     @property
     def transferible(self):
-        return self.paciente.dias_minimos_i <= 0
+        return self.paciente.dias_recomendados_i <= 0
 
     def checkout(self):
         paciente = self.paciente

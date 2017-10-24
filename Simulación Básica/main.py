@@ -3,7 +3,7 @@ from Hospital import Simulacion
 
 # Ingresamos los parámetros de la simulación
 n_simulaciones = 100
-tiempo_simulacion = 90
+tiempo_simulacion = 60
 
 # Inicializamos los contadores que serán las métricas
 costo_global = 0

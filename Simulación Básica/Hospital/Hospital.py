@@ -184,6 +184,7 @@ class Hospital:
             # Intermedios
             camas_ordenadas = sorted(self.camas_intermedias_ocupadas,
                                      key = lambda x: x.dias_recomendados)
+            #Si quiero poner recomendado tambien hay que modificar la función transferible en la clase Cama para que vea el recomendado y no el minimo
             for cama_origen in camas_ordenadas:
                 # Si ya cumplió con los días recomendados
                 if cama_origen.transferible:
