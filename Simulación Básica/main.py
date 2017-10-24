@@ -1,4 +1,4 @@
-from Hospital import Simulacion
+from PoliticaDiasRecomendados import Hospital as Simulacion
 
 
 # Ingresamos los parámetros de la simulación
