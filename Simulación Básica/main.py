@@ -1,4 +1,6 @@
 from PoliticaDiasRecomendados import Hospital as Simulacion
+import numpy as np
+import pandas as pd
 
 
 # Ingresamos los parámetros de la simulación
@@ -118,4 +120,7 @@ with open("DisponibilidadBasica.csv", "w") as outfile:
         outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
 
 
-
+#Asi se usa
+lista1 = pd.DataFrame({'Datos':disponibilidad_dia_basica_promedio})
+lista1 = lista1.rolling(5).mean()
+print(lista1)
