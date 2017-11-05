@@ -44,7 +44,7 @@ class Hospital(HospitalBase):
                     dados_alta_basica.append(paciente)
 
                 else:
-                    raise Exception("Ta la cagaa")
+                    raise Exception("Mala la que haciste")
 
                 # Aprovechamos de guardar estadísticas
                 self.dias_extra_c += paciente.dias_extra_c
