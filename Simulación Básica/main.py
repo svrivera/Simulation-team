@@ -40,9 +40,9 @@ for i in range(n_simulaciones):
 
     altas_global += s.altas_dadas_basica + s.altas_dadas_critica + s.altas_dadas_intermedia
     ####Para ver % ocupación
-    disp_crit.append( sum(d[0] for d in s.disponibilidad) / len(s.disponibilidad))
-    disp_int.append(sum(d[1] for d in s.disponibilidad) / len(s.disponibilidad))
-    disp_bas.append(sum(d[2] for d in s.disponibilidad) / len(s.disponibilidad))
+    disp_crit.append(sum(d[0] for d in s.disponibilidad) / len(s.disponibilidad))
+    disp_int.append( sum(d[1] for d in s.disponibilidad) / len(s.disponibilidad))
+    disp_bas.append( sum(d[2] for d in s.disponibilidad) / len(s.disponibilidad))
 
 
 

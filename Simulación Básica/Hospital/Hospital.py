@@ -120,24 +120,3 @@ class Hospital:
     @property
     def altas_dadas_basica(self):
         return sum(map(lambda x: len(x), self.dados_alta_basica))
-
-
-    def show_estadistica(self):
-        s = ""
-        s += "Simulación [{}]\n\n".format(self.id)
-        s += "Tiempo de Simulación: {}\n".format(self.tiempo_CPU)
-        s += "Días Simulados: {}\n".format(self.tiempo_simulacion)
-        s += "Costo Externalización Total: {}\n".format(self.costo_externalizacion)
-        s += "Cantidad de Pacientes Derivados: {}\n".format(self.pacientes_derivados)
-        s += "Cantidad de Pacientes dados de Alta: {}\n".format(self.altas_dadas)
-
-        s += "Días Perdidos:\n"
-        s += "Días Totales Perdidos en Críticas: {}\n".format(self.dias_extra_c)
-        s += "Días Totales Perdidos en Intermedias: {}\n".format(self.dias_extra_i)
-        s += "Estado Sistema al finalizar\n"
-        s += "Cantidad de Camas Críticas Ocupadas: {}\n".format(len(self.camas_criticas_ocupadas))
-        s += "Cantidad de Camas Intermedias Ocupadas: {}\n".format(len(self.camas_intermedias_ocupadas))
-        s += "Cantidad de Camas Básicas Ocupadas: {}\n".format(len(self.camas_basicas_ocupadas))
-
-
-        return s
