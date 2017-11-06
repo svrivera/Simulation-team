@@ -1,11 +1,16 @@
-from PoliticaDiasRecomendados import Hospital as Simulacion
+from Politicas import Hospital as Simulacion
 import numpy as np
 import pandas as pd
+from Escenarios import generador
+from collections import defaultdict
+from random import seed
 
 
+seed(4)
 # Ingresamos los parámetros de la simulación
 n_simulaciones = 30
-tiempo_simulacion = 100
+tiempo_simulacion = 60
+dia_transiente = 29
 
 # Inicializamos los contadores que serán las métricas
 costo_global = 0
@@ -29,12 +34,17 @@ disponibilidad_por_dia_critica = []
 disponibilidad_por_dia_intermedia = []
 disponibilidad_por_dia_basica = []
 
+#
+set_colas = generador(n_simulaciones, tiempo_simulacion)
+
 
 for i in range(n_simulaciones):
-    Sim = Simulacion(tiempo_simulacion=tiempo_simulacion,
+    Sim = Simulacion(tiempo_simulacion=tiempo_simulacion, dia_transiente=dia_transiente,
                    n_criticas=18,
                    n_intermedias=31,
-                   n_basicas=213)
+                   n_basicas=213,
+                   cola_paciente = set_colas[i])
+    Sim.preparacion()
 
     Sim.run()
 
@@ -56,10 +66,18 @@ for i in range(n_simulaciones):
     disponibilidad_por_dia_intermedia.append([d[1] for d in Sim.disponibilidad])
     disponibilidad_por_dia_basica.append([d[2] for d in Sim.disponibilidad])
 
+    dic_pacientes_atendidos = defaultdict(int)
+
+    for lista in Sim.dados_alta_basica:
+        for paciente in lista:
+            dic_pacientes_atendidos[paciente.enfermedad] += 1
+
+
 
 disponibilidad_dia_critica_promedio = []
 disponibilidad_dia_intermedia_promedio = []
 disponibilidad_dia_basica_promedio = []
+
 
 for dia in range(tiempo_simulacion):
     disponibilidad_dia_critica_promedio.append(sum(x[dia] for x in disponibilidad_por_dia_critica)/n_simulaciones)
@@ -90,37 +108,39 @@ s += "Días Promedio Perdidos en Intermedias: {}\n".format(dias_extra_i/n_simula
 s += "Disponibilidad Camas Críticas: {:.2f}%\n".format(sum(disp_crit) / len(disp_crit))
 s += "Disponibilidad Camas Intermedias: {:.2f}%\n".format(sum(disp_int) / len(disp_int))
 s += "Disponibilidad Camas Básicas: {:.2f}%\n".format(sum(disp_bas) / len(disp_bas))
-
 print(s)
 
-
-# Buscamos el punto transciente
-
-import matplotlib.pyplot as plt
-plt.plot(disponibilidad_dia_basica_promedio)
-plt.plot(disponibilidad_dia_intermedia_promedio)
-plt.plot(disponibilidad_dia_critica_promedio)
-plt.ylabel('Disponibilidad camas')
-plt.xlabel('Días')
-plt.show()
-# Guardamos en excel
-with open("DisponibilidadCriticas.csv", "w") as outfile:
-    outfile.write("Día;Disponibilidad\n")
-    for i, dato in enumerate(disponibilidad_dia_critica_promedio):
-        outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
-
-with open("DisponibilidadIntermedias.csv", "w") as outfile:
-    outfile.write("Día;Disponibilidad\n")
-    for i, dato in enumerate(disponibilidad_dia_intermedia_promedio):
-        outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
-
-with open("DisponibilidadBasica.csv", "w") as outfile:
-    outfile.write("Día;Disponibilidad\n")
-    for i, dato in enumerate(disponibilidad_dia_basica_promedio):
-        outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
+print(dic_pacientes_atendidos)
 
 
-#Asi se usa
-lista1 = pd.DataFrame({'Datos':disponibilidad_dia_basica_promedio})
-lista1 = lista1.rolling(5).mean()
-print(lista1)
+# # Buscamos el punto transciente
+#
+#
+# # Guardamos en excel
+# with open("DisponibilidadCriticas.csv", "w") as outfile:
+#     outfile.write("Día;Disponibilidad\n")
+#     for i, dato in enumerate(disponibilidad_dia_critica_promedio):
+#         outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
+#
+# with open("DisponibilidadIntermedias.csv", "w") as outfile:
+#     outfile.write("Día;Disponibilidad\n")
+#     for i, dato in enumerate(disponibilidad_dia_intermedia_promedio):
+#         outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
+#
+# with open("DisponibilidadBasica.csv", "w") as outfile:
+#     outfile.write("Día;Disponibilidad\n")
+#     for i, dato in enumerate(disponibilidad_dia_basica_promedio):
+#         outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
+#
+#
+# #Asi se usa
+# lista1 = pd.DataFrame({'Datos':disponibilidad_dia_basica_promedio})
+# lista2 = lista1.rolling(5).mean()
+#
+#
+# import matplotlib.pyplot as plt
+# plt.plot(lista1)
+# plt.plot(lista2)
+# plt.ylabel('Disponibilidad camas')
+# plt.xlabel('Días')
+# plt.show()

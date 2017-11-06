@@ -19,7 +19,7 @@ class GRD:
 class Coronario(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -27,13 +27,14 @@ class Coronario(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 
 class Hepatico(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -41,13 +42,14 @@ class Hepatico(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 
 class Respiratorio(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -55,13 +57,14 @@ class Respiratorio(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 
 class Renal(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -69,13 +72,14 @@ class Renal(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 
 class Neurologico(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -83,13 +87,14 @@ class Neurologico(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 
 class Traumatologico(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -97,13 +102,14 @@ class Traumatologico(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 
 class Esofagico(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -111,13 +117,14 @@ class Esofagico(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 
 class Oftalmologico(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -125,13 +132,14 @@ class Oftalmologico(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 
 class Circulatorio(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -139,13 +147,14 @@ class Circulatorio(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 
 class Intestinal(GRD):
     contador = 0
 
-    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, tasa):
+    def __init__(self, nombre, tiempo_recomendado, tiempo_minimo, ponderador_c, ponderador_i, costo, ranking, tasa):
         self.nombre = nombre
         self.tiempo_recomendado = tiempo_recomendado
         self.tiempo_minimo = tiempo_minimo
@@ -153,6 +162,7 @@ class Intestinal(GRD):
         self.ponderador_i = ponderador_i
         self.costo_externalizacion = costo
         self.tasa_llegada = tasa
+        self.ranking = ranking
         super().__init__()
 
 

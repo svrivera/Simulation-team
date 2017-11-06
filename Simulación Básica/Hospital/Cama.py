@@ -64,6 +64,10 @@ class CamaCritica(Cama):
     def transferible(self):
         return self.paciente.dias_minimos_c <= 0
 
+    @property
+    def sin_penalizacion(self):
+        return self.paciente.dias_recomendados_c <= 0
+
     def checkout(self):
         paciente = self.paciente
         paciente.dias_adelantado_c = self.dias_recomendados
@@ -93,6 +97,10 @@ class CamaIntermedia(Cama):
     @property
     def transferible(self):
         return self.paciente.dias_minimos_i <= 0
+
+    @property
+    def sin_penalizacion(self):
+        return self.paciente.dias_recomendados_i <= 0
 
     def checkout(self):
         paciente = self.paciente

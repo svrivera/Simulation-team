@@ -96,6 +96,10 @@ class Paciente:
         return self.__GRD.nombre
 
     @property
+    def ranking(self):
+        return self.__GRD.ranking
+
+    @property
     def cama_necesitada(self):
         if self.dias_minimos_c > 0:
             return "Critica"
