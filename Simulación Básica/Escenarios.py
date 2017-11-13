@@ -1,6 +1,11 @@
 
 from Hospital import pacientes_del_dia
 
+from random import seed
+
+seed(2)
+
+
 
 def generador(n_simulaciones, dias_totales):
 

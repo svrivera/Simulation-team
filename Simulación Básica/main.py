@@ -4,12 +4,14 @@ import pandas as pd
 from Escenarios import generador
 from collections import defaultdict
 from random import seed
+import pickle
+from Estado import politicas_transferencia_hacia_intermedia, politicas_llegadas_intermedias
 
 
-seed(4)
+seed(1)
 # Ingresamos los parámetros de la simulación
 n_simulaciones = 30
-tiempo_simulacion = 60
+tiempo_simulacion = 100
 dia_transiente = 29
 
 # Inicializamos los contadores que serán las métricas
@@ -34,16 +36,25 @@ disponibilidad_por_dia_critica = []
 disponibilidad_por_dia_intermedia = []
 disponibilidad_por_dia_basica = []
 
-#
-set_colas = generador(n_simulaciones, tiempo_simulacion)
 
+set_colas = generador(n_simulaciones, tiempo_simulacion)
+#with open("colas", "wb") as outfile:
+#    pickle.dump(set_colas2, outfile)
+
+
+#set_colas2 = None
+
+#with open("colas", "rb") as outfile:
+#    set_colas = pickle.load(outfile)
 
 for i in range(n_simulaciones):
     Sim = Simulacion(tiempo_simulacion=tiempo_simulacion, dia_transiente=dia_transiente,
                    n_criticas=18,
                    n_intermedias=31,
                    n_basicas=213,
-                   cola_paciente = set_colas[i])
+                   cola_paciente = set_colas[i],
+                   politica_hacia_intermedia = politicas_transferencia_hacia_intermedia,
+                   politicas_llegadas_intermedias=politicas_llegadas_intermedias)
     Sim.preparacion()
 
     Sim.run()
@@ -93,6 +104,8 @@ s += "Número de Simulaciones: {}\n".format(n_simulaciones)
 s += "Días Simulados: {}\n\n".format(tiempo_simulacion)
 
 s += "Costo Externalización Promedio: {}\n\n".format(costo_global/n_simulaciones)
+
+s += "Costo Externalización del Paciente (Promedio): {}\n\n".format(costo_global/derivados_global)
 
 s += "Cantidad Promedio de Pacientes Derivados : {}\n\n".format(derivados_global/n_simulaciones)
 

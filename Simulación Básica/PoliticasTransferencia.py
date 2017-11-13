@@ -1,3 +1,32 @@
+# Bajadas de Crítica a Intermedia:
+#--------------------------------------------------------------------------------
+#sin penalizacion
+from Hospital import razon_deseada_intermedia
+
+
+def bajar_minimo(self):
+    camas_ordenadas = sorted(self.camas_criticas_ocupadas,
+                             key=lambda x: x.dias_recomendados)
+
+    for cama_origen in camas_ordenadas:
+        if cama_origen.transferible:
+            if cama_origen.siguiente_cama == "Intermedia":
+                camas_libres = self.camas_intermedias_libres
+            elif cama_origen.siguiente_cama == "Basica":
+                camas_libres = self.camas_basicas_libres
+            else:
+                raise Exception("Cama solicitada no existe")
+
+            if len(camas_libres) > 0:
+                # Si hay camas, tomo la primera
+                cama_destino = camas_libres[0]
+                paciente = cama_origen.checkout()
+
+                cama_destino.recibir_paciente(paciente)
+            else:
+                break
+
+#--------------------------------------------------------------------------------
 
 def bajar_todo_intermedia(self):
     # Intermedios
@@ -56,26 +85,62 @@ def bajar_critica_basica(self):
             # Acá se debe agregar criterios de transferencia temprana de pacientes
             break
 
-def bajar_todo_critica(self):
-    camas_ordenadas = sorted(self.camas_criticas_ocupadas,
-                             key=lambda x: x.dias_recomendados)
+# BAJANDO DE CRITICA A INTERMEDIA
 
-    for cama_origen in camas_ordenadas:
-        if cama_origen.transferible:
-            if cama_origen.siguiente_cama == "Intermedia":
-                camas_libres = self.camas_intermedias_libres
-            elif cama_origen.siguiente_cama == "Basica":
-                camas_libres = self.camas_basicas_libres
-            else:
-                raise Exception("Cama solicitada no existe")
 
-            if len(camas_libres) > 0:
-                # Si hay camas, tomo la primera
-                cama_destino = camas_libres[0]
-                paciente = cama_origen.checkout()
+def bajar_todo_critica(self, *args):
+    while len(self.camas_intermedias_libres) > 0 and len(self.camas_criticas_transferible) > 0:
+        camas_libres = self.camas_intermedias_libres
+        if len(self.camas_criticas_sin_penalizacion) > 0:
+            cama_origen = self.camas_criticas_sin_penalizacion[0]
+        else:
+            cama_origen = sorted(self.camas_criticas_transferible, key=lambda cama: cama.dias_recomendados, reverse = True)[0]
+        cama_destino = self.camas_intermedias_libres[0]
+        paciente = cama_origen.checkout()
 
-                cama_destino.recibir_paciente(paciente)
-            else:
-                break
+        cama_destino.recibir_paciente(paciente)
 
+
+def bajar_con_reserva_moderada(self, llegadas_esperadas, sensibilidad):
+
+    n_pedidas = len(self.camas_criticas_transferible)
+    n_disponibles = len(self.camas_intermedias_libres)
+
+    llegadas_esperadas_deseadas = int(llegadas_esperadas * razon_deseada_intermedia(self.ranking_promedio)) - sensibilidad
+
+    razon_a_guardar = llegadas_esperadas_deseadas / (n_pedidas + llegadas_esperadas)
+    n_reservadas = int(n_disponibles * razon_a_guardar)
+    while (n_disponibles - n_reservadas) > 0 and len(self.camas_criticas_transferible) > 0:
+        n_disponibles = len(self.camas_intermedias_libres)
+
+        if len(self.camas_criticas_sin_penalizacion) > 0:
+            cama_origen = self.camas_criticas_sin_penalizacion[0]
+        else:
+            cama_origen = sorted(self.camas_criticas_transferible, key=lambda cama: cama.dias_recomendados, reverse = True)[0]
+        cama_destino = self.camas_intermedias_libres[0]
+        paciente = cama_origen.checkout()
+
+        cama_destino.recibir_paciente(paciente)
+
+
+def bajar_con_reserva_agresiva(self, llegadas_esperadas, sensibilidad):
+
+    n_pedidas = len(self.camas_criticas_transferible)
+    n_disponibles = len(self.camas_intermedias_libres)
+
+    llegadas_esperadas_deseadas = int(llegadas_esperadas * razon_deseada_intermedia(self.ranking_promedio)) + sensibilidad
+
+    razon_a_guardar = llegadas_esperadas_deseadas / (n_pedidas + llegadas_esperadas)
+    n_reservadas = int(n_disponibles * razon_a_guardar)
+    while (n_disponibles - n_reservadas) > 0 and len(self.camas_criticas_transferible) > 0:
+        n_disponibles = len(self.camas_intermedias_libres)
+
+        if len(self.camas_criticas_sin_penalizacion) > 0:
+            cama_origen = self.camas_criticas_sin_penalizacion[0]
+        else:
+            cama_origen = sorted(self.camas_criticas_transferible, key=lambda cama: cama.dias_recomendados, reverse = True)[0]
+        cama_destino = self.camas_intermedias_libres[0]
+        paciente = cama_origen.checkout()
+
+        cama_destino.recibir_paciente(paciente)
 

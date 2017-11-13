@@ -57,6 +57,20 @@ class Hospital:
     # ---------------------------------------------------------------------------
 
     @property
+    def disponibilidad_criticas(self):
+        return (len(self.camas_criticas_libres) * 100) / len(self.camas_criticas)
+
+    @property
+    def disponibilidad_intermedias(self):
+        return (len(self.camas_intermedias_libres) * 100) / len(self.camas_intermedias)
+
+    @property
+    def disponibilidad_basicas(self):
+        return (len(self.camas_basicas_libres) * 100) / len(self.camas_basicas)
+
+    # ---------------------------------------------------------------------------
+
+    @property
     def camas_a_dar_de_alta(self):
         l1 = list(filter(lambda x: x.alta_medica, self.camas_criticas_ocupadas))
         l2 = list(filter(lambda x: x.alta_medica, self.camas_intermedias_ocupadas))
@@ -64,9 +78,14 @@ class Hospital:
         return l1 + l2 + l3
 
     # ---------------------------------------------------------------------------
+
     @property
-    def ranking_promedio_criticas(self):
-        camas_ocupadas = self.camas_criticas_ocupadas
+    def ranking_promedio(self):
+        camas_ocupadas = []
+        camas_ocupadas += self.camas_criticas_ocupadas
+        camas_ocupadas += self.camas_intermedias_ocupadas
+        camas_ocupadas += self.camas_basicas_ocupadas
+
         if len(camas_ocupadas) == 0:
             return 0
         return sum(cama.paciente.ranking for cama in camas_ocupadas) / len(camas_ocupadas)
@@ -258,9 +277,18 @@ class Hospital:
             Política Actual:
             Si hay una cama en el nivel pedido, se la da. Sino, se externaliza
             '''
+            i = 0
+
+            #print("comienzo dia")
+            #print("Pacientes | Disp Critica | # Critica | Disp Intermedia | # Intermedia | Disp Basica | # Basica  | Ranking")
 
             pacientes = pacientes_del_dia(self.tiempo_actual)
             while pacientes:
+                #print(
+                #    "{0}         | {1:.4f}     | {2}        | {3:.4f}         | {4}        | {5:.4f}            | {6}  ".format(
+                #        i, self.disponibilidad_criticas, len(self.camas_criticas_libres),
+                #        self.disponibilidad_intermedias, len(self.camas_intermedias_libres),
+                #        self.disponibilidad_basicas, len(self.camas_basicas_libres)))
 
                 # Aumentamos en 1 el número de pacientes que llegan
                 self.pacientes_arribados += 1
@@ -293,6 +321,7 @@ class Hospital:
                     else:
                         # Si no hay camas libres, se externaliza
                         pacientes_externalizados_dia.append(paciente)
+                i += 1
 
             # ------------------------------------------------------------------
             # Setup

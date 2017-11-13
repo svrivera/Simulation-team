@@ -1,20 +1,15 @@
-from Hospital import HospitalBase, CamaIntermedia, CamaCritica, CamaBasica, pacientes_del_dia,  llegadas_esperadas_criticas, llegadas_esperadas_intermedias, deseados_criticos, deseados_intermedias
+from Hospital import HospitalBase, CamaIntermedia, CamaCritica, CamaBasica, pacientes_del_dia
 from time import time
 from set_politicas import *
 from PoliticasTransferencia import *
-from Estado import calcular_estado_sistema_transferencia, calcular_estado_recibir_intermedia
-from collections import defaultdict
 
 
 class Hospital(HospitalBase):
 
 
-    def __init__(self, tiempo_simulacion, dia_transiente, n_criticas, n_intermedias, n_basicas, cola_paciente,
-                 politica_hacia_intermedia, politicas_llegadas_intermedias):
+    def __init__(self, tiempo_simulacion, dia_transiente, n_criticas, n_intermedias, n_basicas, cola_paciente):
         super().__init__(tiempo_simulacion, dia_transiente, n_criticas, n_intermedias, n_basicas)
         self.cola_paciente = cola_paciente
-        self.politica_hacia_intermedia = politica_hacia_intermedia
-        self.politicas_llegadas_intermedias = politicas_llegadas_intermedias
 
 
 
@@ -53,13 +48,7 @@ class Hospital(HospitalBase):
                 self.dias_extra_i += paciente.dias_extra_i
 
             # ------------------------------------------------------------------
-            # ------------------------------------------------------------------
-            # ------------------------------------------------------------------
-            ##### Tranferencias de Pacientes entre Camas #####
-
-            # ------------------------------------------------------------------
-            ## Transferencia HACIA basica:
-
+            # Tranferencias de Pacientes entre Camas
             # Estado del sistema en basica
 
             n_camas_libres_basicas = len(self.camas_basicas_libres)
@@ -67,7 +56,11 @@ class Hospital(HospitalBase):
             n_transferibles_sin_penalizacion_intermedia = len(self.camas_intermedias_sin_penalizacion)
             n_tranferibles_critica_basica = len(self.camas_criticas_a_basicas)
 
-            # Pasamos intermedia
+
+            # ------------------------------------------------------------------
+            #Si nos sobran camas basicas, las bajamos
+
+            #Pasamos intermedia
             if n_camas_libres_basicas >= n_transferibles_intermedias + n_tranferibles_critica_basica + n_transferibles_sin_penalizacion_intermedia:
                 bajar_todo_intermedia(self)
                 bajar_critica_basica(self)
@@ -76,59 +69,42 @@ class Hospital(HospitalBase):
                 bajar_critica_basica(self)
                 bajar_solo_sin_penalizacion_intermedia(self)
                 bajar_todo_intermedia(self)
-
             # ------------------------------------------------------------------
-            ## Transferencia HACIA Intermedia:
+            # Estado del sistema Critica
+            #PARAMETRIZAAAAAR!!!!
+            n_llegadas_intermedias = 15
+            n_libres_intermedias = len(self.camas_intermedias_libres)
+            n_criticas_intermedias = len(self.camas_criticas_a_intermedias)
 
-            n_camas_libres_intermedia = len(self.camas_intermedias_libres)
-            n_transferibles_criticas = len(self.camas_criticas_transferible)
-            n_transferibles_sin_penalizacion_critica = len(self.camas_criticas_sin_penalizacion)
+            # -------------------------------------------------------------------
+            #Politicas de vaciado de criticas
+            bajar_todo_critica(self)
+            # -------------------------------------------------------------------
 
-            # llegadas_esperadas_intermedias: estimado de llegadas (~15)
+            dis_critica = (len(self.camas_criticas_libres) * 100) / len(self.camas_criticas)
+            dis_intermedia = (len(self.camas_intermedias_libres) * 100) / len(self.camas_intermedias)
+            dis_basica = (len(self.camas_basicas_libres) * 100) / len(self.camas_basicas)
+            self.disponibilidad_antes.append((dis_critica, dis_intermedia, dis_basica))
+            # -------------------------------------------------------------------
+            # -------------------------------------------------------------------
+            # Llegada pacientes
 
-            estado = calcular_estado_sistema_transferencia(self)
-            self.politica_hacia_intermedia[estado](self, llegadas_esperadas_intermedias, 2)
-
-            #print("Disp Critica | # Critica | Disp Intermedia | # Intermedia | Disp Basica | # Basica | Ranking ")
-            #print("{0:.4f}     | {1}        | {2:.4f}         | {3}        | {4:.4f}            | {5}     | {6} ".format(
-            #        self.disponibilidad_criticas, len(self.camas_criticas_libres),
-            #        self.disponibilidad_intermedias, len(self.camas_intermedias_libres),
-            #        self.disponibilidad_basicas, len(self.camas_basicas_libres),
-            #        self.ranking_promedio))
-            #bajar_con_reserva_moderada
-            #print("Disp Critica | # Critica | Disp Intermedia | # Intermedia | Disp Basica | # Basica | Ranking ")
-            #print("{0:.4f}     | {1}        | {2:.4f}         | {3}        | {4:.4f}            | {5}     | {6} ".format(
-            #        self.disponibilidad_criticas, len(self.camas_criticas_libres),
-            #        self.disponibilidad_intermedias, len(self.camas_intermedias_libres),
-            #        self.disponibilidad_basicas, len(self.camas_basicas_libres),
-            #        self.ranking_promedio))
-            #print("-------"*10)
-
-            # ------------------------------------------------------------------
-
-
-
-            # ------------------------------------------------------------------
-            # LLEGADA PACIENTES
-
-
+            #pacientes = pacientes_del_dia(self.tiempo_actual)
             pacientes = self.cola_paciente[self.tiempo_actual]
 
             # -------------------------------------------------------------------
             # Tratamos a los pacientes
-            avanzados=0
+            i=0
 
-            llegadas = defaultdict(int)
-
-            #print("comienzo dia")
-            #print("Pacientes | Disp Critica | # Critica | Disp Intermedia | # Intermedia | Disp Basica | # Basica | Ranking ")
+            print("comienzo dia")
+            print("Pacientes | Disp Critica | # Critica | Disp Intermedia | # Intermedia | Disp Basica | # Basica | Ranking ")
 
 
             while pacientes:
-                #print("{0}         | {1:.4f}     | {2}        | {3:.4f}         | {4}        | {5:.4f}            | {6}     | {7} ".format(avanzados, self.disponibilidad_criticas, len(self.camas_criticas_libres),
-                #                                                 self.disponibilidad_intermedias, len(self.camas_intermedias_libres),
-                #                                                  self.disponibilidad_basicas, len(self.camas_basicas_libres),
-                #                                                self.ranking_promedio))
+                print("{0}         | {1:.4f}     | {2}        | {3:.4f}         | {4}        | {5:.4f}            | {6}     | {7} ".format(i, self.disponibilidad_criticas, len(self.camas_criticas_libres),
+                                                                  self.disponibilidad_intermedias, len(self.camas_intermedias_libres),
+                                                                  self.disponibilidad_basicas, len(self.camas_basicas_libres),
+                                                                self.ranking_promedio))
 
                 paciente = pacientes.popleft()
                 # Calculamos estado del sistema
@@ -141,17 +117,12 @@ class Hospital(HospitalBase):
                 # Aumentamos en 1 el número de pacientes que llegan
                 self.pacientes_arribados += 1
                 if paciente.cama_necesitada == "Critica":
-
-
-                    deseados = deseados_criticos(self.ranking_promedio)
-
-
                     camas_libres = self.camas_criticas_libres
                     if len(camas_libres) > 0:
                         # Buscamos politicas segun estado estoy intentando implementar la politica exquisita un manjar
                         # -------------------------------------------------------------------
                         # Jugamos
-                        politica_exquisita(self, n_llegadas_criticas, n_llegadas_totales, paciente, pacientes_externalizados_dia, camas_libres, self.ranking_promedio,avanzados)
+                        politica_exquisita(self, n_llegadas_criticas, n_llegadas_totales, paciente, pacientes_externalizados_dia, camas_libres, self.ranking_promedio,i)
 
                             # -------------------------------------------------------------------
                     else:
@@ -165,28 +136,13 @@ class Hospital(HospitalBase):
 
                 elif paciente.cama_necesitada == "Intermedia":
 
-                    deseados = deseados_intermedias(self.ranking_promedio)
-                    n_deseados_ya_arribados = sum(llegadas[x] for x in deseados)
-
-                    camas_libres = self.camas_intermedias_libres
-                    if len(camas_libres) > 0:
-                        # Parametrizar el 10
-                        estado = calcular_estado_recibir_intermedia(self, avanzados, 10, n_deseados_ya_arribados)
-                        self.politicas_llegadas_intermedias[estado](self, camas_libres, paciente, pacientes_externalizados_dia, deseados)
-
-                    else:
-                        # Si no hay camas libres, se externaliza
-                        pacientes_externalizados_dia.append(paciente)
+                    recibir_todo_intermedia(self, paciente, pacientes_externalizados_dia)
 
 
                 else:
 
                     recibir_todo_basica(self, paciente, pacientes_externalizados_dia)
-
-
-                avanzados+=1
-
-                llegadas[paciente.enfermedad] += 1
+                i+=1
 
             # ------------------------------------------------------------------
             # Setup
