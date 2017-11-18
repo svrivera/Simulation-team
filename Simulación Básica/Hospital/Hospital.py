@@ -282,7 +282,7 @@ class Hospital:
             #print("comienzo dia")
             #print("Pacientes | Disp Critica | # Critica | Disp Intermedia | # Intermedia | Disp Basica | # Basica  | Ranking")
 
-            pacientes = self.cola_paciente[self.tiempo_actual]
+            pacientes = pacientes_del_dia(self.tiempo_actual)
             while pacientes:
                 #print(
                 #    "{0}         | {1:.4f}     | {2}        | {3:.4f}         | {4}        | {5:.4f}            | {6}  ".format(
