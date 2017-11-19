@@ -7,6 +7,12 @@ class Paciente:
         self.__GRD = GRD
         GRD.aumentar_contador()
 
+        self.dmc = GRD.tiempo_minimo[0]
+        self.dmi = GRD.tiempo_minimo[1]
+
+        self.drc = GRD.tiempo_recomendado[0]
+        self.dri = GRD.tiempo_recomendado[1]
+
         self.__dias_recomendados_c = GRD.tiempo_recomendado[0]
         self.__dias_recomendados_i = GRD.tiempo_recomendado[1]
         self.dias_recomendados_b = GRD.tiempo_recomendado[2]
@@ -19,6 +25,9 @@ class Paciente:
 
         self.__dias_adelantado_i = 0
         self.dias_extra_i = 0
+
+        self.bajada_critica = 0
+        self.bajada_intermedia = 0
 
     @property
     def dias_recomendados_c(self):

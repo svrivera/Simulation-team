@@ -44,7 +44,6 @@ def bajar_todo_intermedia(self):
                 cama_destino.recibir_paciente(paciente)
             else:
                 # No hay camas libres en el nivel básico
-
                 # Acá se debe agregar criterios de transferencia temprana de pacientes
                 break
 
@@ -86,7 +85,6 @@ def bajar_critica_basica(self):
             break
 
 # BAJANDO DE CRITICA A INTERMEDIA
-
 
 def bajar_todo_critica(self, *args):
     while len(self.camas_intermedias_libres) > 0 and len(self.camas_criticas_transferible) > 0:
@@ -132,6 +130,9 @@ def bajar_con_reserva_agresiva(self, llegadas_esperadas, sensibilidad):
 
     razon_a_guardar = llegadas_esperadas_deseadas / (n_pedidas + llegadas_esperadas)
     n_reservadas = int(n_disponibles * razon_a_guardar)
+
+    print(n_reservadas)
+
     while (n_disponibles - n_reservadas) > 0 and len(self.camas_criticas_transferible) > 0:
         n_disponibles = len(self.camas_intermedias_libres)
 

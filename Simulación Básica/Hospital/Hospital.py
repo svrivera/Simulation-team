@@ -191,7 +191,7 @@ class Hospital:
 
             for cama in self.camas_a_dar_de_alta:
                 paciente = cama.checkout()
-
+                '''
                 if isinstance(cama, CamaCritica):
                     dados_alta_critica.append(paciente)
 
@@ -208,7 +208,7 @@ class Hospital:
                 self.dias_extra_c += paciente.dias_extra_c
                 self.dias_extra_i += paciente.dias_extra_i
 
-
+                '''
 
             # ------------------------------------------------------------------
             # Tranferencias de Pacientes entre Camas
@@ -282,7 +282,7 @@ class Hospital:
             #print("comienzo dia")
             #print("Pacientes | Disp Critica | # Critica | Disp Intermedia | # Intermedia | Disp Basica | # Basica  | Ranking")
 
-            pacientes = pacientes_del_dia(self.tiempo_actual)
+            pacientes = self.cola_paciente[self.tiempo_actual]
             while pacientes:
                 #print(
                 #    "{0}         | {1:.4f}     | {2}        | {3:.4f}         | {4}        | {5:.4f}            | {6}  ".format(
@@ -300,27 +300,27 @@ class Hospital:
                         # Si hay camas, tomo la primera
                         cama = camas_libres[0]
                         cama.recibir_paciente(paciente)
-                    else:
+                    #else:
                         # Si no hay camas libres, se externaliza
-                        pacientes_externalizados_dia.append(paciente)
+                    #    pacientes_externalizados_dia.append(paciente)
                 elif paciente.cama_necesitada == "Intermedia":
                     camas_libres = self.camas_intermedias_libres
                     if len(camas_libres) > 0:
                         # Si hay camas, tomo la primera
                         cama = camas_libres[0]
                         cama.recibir_paciente(paciente)
-                    else:
+                    #else:
                         # Si no hay camas libres, se externaliza
-                        pacientes_externalizados_dia.append(paciente)
+                    #    pacientes_externalizados_dia.append(paciente)
                 else:
                     camas_libres = self.camas_basicas_libres
                     if len(camas_libres) > 0:
                         # Si hay camas, tomo la primera
                         cama = camas_libres[0]
                         cama.recibir_paciente(paciente)
-                    else:
+                    #else:
                         # Si no hay camas libres, se externaliza
-                        pacientes_externalizados_dia.append(paciente)
+                    #    pacientes_externalizados_dia.append(paciente)
                 i += 1
 
             # ------------------------------------------------------------------

@@ -3,15 +3,10 @@ from Hospital import prioridad_grd
 #  Llegadas:
 
 #--------------------------------------------------------------------------------
-def politica_exquisita(self, n_llegadas, n_llegadas_totales, paciente, pacientes_externalizados_dia, camas_libres, r, i): #Cambiar nombre
-    if len(camas_libres) * 1.1 <  n_llegadas - i and i < n_llegadas_totales * 0.6:
-        recibir_priorizado_criticas(self, paciente, pacientes_externalizados_dia, camas_libres[0],r)
-    else:
-        recibir_todo_critica(self, paciente, camas_libres[0])
 # Se activa cuando hay pocas camas
 
 
-def recibir_priorizado_criticas(self, paciente, pacientes_externalizados_dia, cama, r):
+def recibir_priorizado_criticas(self, paciente, cama, pacientes_externalizados_dia, r):
     if paciente.ranking > r:
         cama.recibir_paciente(paciente)
     else:
@@ -20,22 +15,20 @@ def recibir_priorizado_criticas(self, paciente, pacientes_externalizados_dia, ca
 
 
 
-def recibir_todo_critica(self, paciente, cama):
+def recibir_todo_critica(self, paciente, cama, *args):
     # Aumentamos en 1 el número de pacientes que llegan
     cama.recibir_paciente(paciente)
 
 #--------------------------------------------------------------------------------
 
 
-def recibir_todo_intermedia(self, camas_libres,  paciente, *args):
+def recibir_todo_intermedia(self, paciente, cama, *args):
     # Si hay camas, tomo la primera
-    cama = camas_libres[0]
     cama.recibir_paciente(paciente)
 
 
-def recibir_deseados_intermedia(self, camas_libres, paciente, pacientes_externalizados_dia, deseados):
+def recibir_deseados_intermedia(self, paciente, cama, pacientes_externalizados_dia, deseados):
     if paciente.enfermedad in deseados:
-        cama = camas_libres[0]
         cama.recibir_paciente(paciente)
     else:
         pacientes_externalizados_dia.append(paciente)
@@ -52,10 +45,5 @@ def recibir_todo_basica(self, paciente, pacientes_externalizados_dia):
     else:
         # Si no hay camas libres, se externaliza
         pacientes_externalizados_dia.append(paciente)
-
-
-
-
-
 
 politicas = {}

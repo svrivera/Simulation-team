@@ -70,7 +70,17 @@ class CamaCritica(Cama):
 
     def checkout(self):
         paciente = self.paciente
+
+        if self.dias_recomendados == 0:
+            paciente.bajada_critica = 1
+        elif self.dias_recomendados == paciente.drc - paciente.dmc:
+            paciente.bajada_critica = 2
+        else:
+            paciente.bajada_critica = 3
+
         paciente.dias_adelantado_c = self.dias_recomendados
+        #print(self.dias_recomendados)
+
         self.paciente = None
         return paciente
 
@@ -104,7 +114,16 @@ class CamaIntermedia(Cama):
 
     def checkout(self):
         paciente = self.paciente
+
+        if self.dias_recomendados == 0:
+            paciente.bajada_intermedia = 1
+        elif self.dias_recomendados == paciente.dri - paciente.dmi or paciente.dias_minimos_i == 0:
+            paciente.bajada_intermedia = 2
+        else:
+            paciente.bajada_intermedia = 3
+
         paciente.dias_adelantado_i += self.dias_recomendados
+
         self.paciente = None
         return paciente
 
