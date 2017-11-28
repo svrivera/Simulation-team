@@ -12,12 +12,12 @@ from Estado import *
 resp = ""
 eleccion = {"1": Sim1, "2": Sim2}
 while resp != "1" and resp != "2":
-    resp = input("Qué quieres hacer?:\n[1] Ver Anhealing\n[2] Ver Política Agresiva\n>\t")
+    resp = input("\n\nQué quieres hacer?:\n\n[1] Ver Anhealing\n[2] Ver Política Agresiva\n>\t")
 Simulacion = eleccion[resp]
 
 # Ingresamos los parámetros de la simulación
 n_simulaciones = 30
-tiempo_simulacion = 100
+tiempo_simulacion = 60
 dia_transiente = 19
 
 n_criticas=18
@@ -70,7 +70,7 @@ p_llego_a_intermedia = 0
 #    set_colas = pickle.load(outfile)
 
 interm = 0
-print("Simulando... \n\n\n")
+print("\nSimulando... \n\n\n")
 for i in range(n_simulaciones):
     Sim = Simulacion(tiempo_simulacion=tiempo_simulacion, dia_transiente=dia_transiente,
                    n_criticas=n_criticas,
@@ -165,6 +165,9 @@ z = generador3(p_b_r_c / n_simulaciones, d)
 s += "Número Promedio de Pacientes bajados directo desde Crítica a Básica: {}\n".format(p_b_directo_basica / n_simulaciones)
 s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Completo: {}\n".format(z)
 s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Mínimo: {}\n".format(y)
+
+s += "\nNúmero Promedio de Pacientes Atendidos en Intermedia: {}\n\n".format(interm)
+
 #s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Medio: {}\n".format(x)
 #s += "Número Promedio de Pacientes bajados de Intermedia con Tratamiento Completo: {}\n".format(p_b_r_i / n_simulaciones)
 #s += "Número Promedio de Pacientes bajados de Intermedia con Tratamiento Mínimo: {}\n".format(p_b_m_i / n_simulaciones)
@@ -271,7 +274,7 @@ while seguir != "0" and not d:
 
         boolean, aux, txt = respuesta_gestor_transferencia[estado]
 
-        if boolean:s
+        if boolean:
 
             razon_a_guardar = 10 / (int(transferibles) + 10)
 
@@ -283,3 +286,41 @@ while seguir != "0" and not d:
                 print("Bajar los {} pacientes críticos".format(int(transferibles)))
             else:
                 print(txt.format(int(n_camas_i_libres)))
+
+
+
+
+
+
+# ### # Buscamos el punto tranciente
+# import matplotlib.pyplot as plt
+# import pandas as pd
+#
+# # Guardamos en excel
+# with open("DisponibilidadCriticas.csv", "w") as outfile:
+#     outfile.write("Día;Disponibilidad\n")
+#     for i, dato in enumerate(disponibilidad_dia_critica_promedio):
+#         outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
+#
+# with open("DisponibilidadIntermedias.csv", "w") as outfile:
+#     outfile.write("Día;Disponibilidad\n")
+#     for i, dato in enumerate(disponibilidad_dia_intermedia_promedio):
+#         outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
+#
+# with open("DisponibilidadBasica.csv", "w") as outfile:
+#     outfile.write("Día;Disponibilidad\n")
+#     for i, dato in enumerate(disponibilidad_dia_basica_promedio):
+#         outfile.write(str(i+1)+";"+str(dato).replace(".", ",")+"\n")
+#
+#
+# #Asi se usa
+# lista1 = pd.DataFrame({'Datos':disponibilidad_dia_basica_promedio})
+# lista1 = pd.DataFrame({'Datos':disponibilidad_dia_basica_promedio})
+# lista2 = lista1.rolling(5).mean()
+#
+# plt.ylim([0,100])
+# plt.plot(lista1)
+# plt.plot(lista2)
+# plt.ylabel('Disponibilidad camas')
+# plt.xlabel('Días')
+# plt.show()
