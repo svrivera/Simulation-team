@@ -15,7 +15,7 @@ class Hospital(HospitalBase):
         self.cola_paciente = cola_paciente
         self.politica_hacia_intermedia = politica_hacia_intermedia
         self.politicas_llegadas_intermedias = politicas_llegadas_intermedias
-
+        self.p_intermedios = 0
 
 
     # ----------------------------------------------------------------------------
@@ -181,6 +181,7 @@ class Hospital(HospitalBase):
                     #print(deseados, self.ranking_promedio, len(camas_libres) > 0)
                     if len(camas_libres) > 0:
                         # Parametrizar el 10
+                        self.p_intermedios += 1
                         self.politicas_llegadas_intermedias[estado_intermedio](self, paciente, camas_libres[0], pacientes_externalizados_dia, deseados_intermedio)
                     else:
                         # Si no hay camas libres, se externaliza

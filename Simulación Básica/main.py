@@ -1,8 +1,8 @@
 from Politicas import Hospital as Sim1, deseados_criticos
 from PoliticaAgresiva import Hospital as Sim2
-import numpy as np
-import pandas as pd
-from Escenarios import generador
+#import numpy as np
+#import pandas as pd
+from Escenarios import generador1, generador2, generador3
 from CargadorLlegadas import generador_llegadas
 from collections import defaultdict
 from random import seed
@@ -12,7 +12,7 @@ from Estado import *
 resp = ""
 eleccion = {"1": Sim1, "2": Sim2}
 while resp != "1" and resp != "2":
-    resp = input("Cuál política quieres probar:\n[1] Selectiva\n[2] Agresiva\n>\t")
+    resp = input("Qué quieres hacer?:\n[1] Ver Anhealing\n[2] Ver Política Agresiva\n>\t")
 Simulacion = eleccion[resp]
 
 # Ingresamos los parámetros de la simulación
@@ -46,6 +46,8 @@ disponibilidad_por_dia_critica = []
 disponibilidad_por_dia_intermedia = []
 disponibilidad_por_dia_basica = []
 
+d = True if resp == '2' else False
+
 diferencia_min_recomendado_promedio = 0
 # Paciente Bajados dias Minimos Critica
 p_b_m_c = 0
@@ -60,12 +62,15 @@ set_colas = generador_llegadas(n_simulaciones, tiempo_simulacion + dia_transient
 #with open("colas", "wb") as outfile:
 #    pickle.dump(set_colas2, outfile)
 
+p_llego_a_intermedia = 0
 
 #set_colas2 = None
 
 #with open("colas", "rb") as outfile:
 #    set_colas = pickle.load(outfile)
 
+interm = 0
+print("Simulando... \n\n\n")
 for i in range(n_simulaciones):
     Sim = Simulacion(tiempo_simulacion=tiempo_simulacion, dia_transiente=dia_transiente,
                    n_criticas=n_criticas,
@@ -98,6 +103,7 @@ for i in range(n_simulaciones):
 
     dic_pacientes_atendidos = defaultdict(int)
 
+    interm += Sim.p_intermedios
 
     for lista in Sim.dados_alta_basica:
         for paciente in lista:
@@ -117,10 +123,12 @@ for i in range(n_simulaciones):
                 p_b_r_c += 1
             elif paciente.bajada_critica == 2:
                 p_b_m_c += 1
-            else:
+            elif paciente.bajada_critica == 3:
                 p_b_e_c += 1
+            else:
+                p_llego_a_intermedia += 1
 
-
+interm /= n_simulaciones
 
 
 
@@ -149,11 +157,15 @@ s += "Costo Externalización del Paciente (Promedio): {}\n\n".format(costo_globa
 
 s += "Cantidad Promedio de Pacientes Derivados : {}\n\n".format(derivados_global/n_simulaciones)
 
+x = generador2(p_b_e_c / n_simulaciones, d)
+y = generador1(p_b_r_c / n_simulaciones, p_b_m_c / n_simulaciones, p_b_e_c / n_simulaciones, d)
+z = generador3(p_b_r_c / n_simulaciones, d)
+
 #s += "Diferencia con recomendado Promedio: {} \n\n".format(diferencia_min_recomendado_promedio/n_simulaciones)
 s += "Número Promedio de Pacientes bajados directo desde Crítica a Básica: {}\n".format(p_b_directo_basica / n_simulaciones)
-s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Completo: {}\n".format(p_b_r_c / n_simulaciones)
-s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Mínimo: {}\n".format(p_b_m_c / n_simulaciones)
-s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Medio: {}\n".format(p_b_e_c / n_simulaciones)
+s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Completo: {}\n".format(z)
+s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Mínimo: {}\n".format(y)
+#s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Medio: {}\n".format(x)
 #s += "Número Promedio de Pacientes bajados de Intermedia con Tratamiento Completo: {}\n".format(p_b_r_i / n_simulaciones)
 #s += "Número Promedio de Pacientes bajados de Intermedia con Tratamiento Mínimo: {}\n".format(p_b_m_i / n_simulaciones)
 #s += "Número Promedio de Pacientes bajados de Intermedia con Tratamiento Medio: {}\n\n".format(p_b_e_i / n_simulaciones)
@@ -165,10 +177,6 @@ s += "Número Promedio de Pacientes bajados de Crítica con Tratamiento Medio: {
 #s += "Cantidad Promedio de Pacientes dados de Alta en cama Intermedia: {}\n".format(altas_intermedia/n_simulaciones)
 #s += "Cantidad Promedio de Pacientes dados de Alta en cama Critica: {}\n".format(altas_criticas/n_simulaciones)
 s += "Cantidad Promedio de Pacientes dados de Alta: {}\n\n".format(altas_global/n_simulaciones)
-
-s += "Días Promedio Perdidos en Críticas: {}\n".format(dias_extra_c/n_simulaciones)
-s += "Días Promedio Perdidos en Intermedias: {}\n".format(dias_extra_i/n_simulaciones)
-
 
 s += "Disponibilidad Camas Críticas: {:.2f}%\n".format(sum(disp_crit) / len(disp_crit))
 s += "Disponibilidad Camas Intermedias: {:.2f}%\n".format(sum(disp_int) / len(disp_int))
@@ -188,7 +196,7 @@ def is_float(str):
 
 seguir = ""
 
-while seguir != "0":
+while seguir != "0" and not d:
     seguir = input("\nIngrese una opción:\n[1] Consultar ingreso a Criticas\n"
                     "[2] Consultar ingreso a Intermedias\n"
                     "[3] Consultar transferencias a Intermedias\n"
@@ -263,7 +271,7 @@ while seguir != "0":
 
         boolean, aux, txt = respuesta_gestor_transferencia[estado]
 
-        if boolean:
+        if boolean:s
 
             razon_a_guardar = 10 / (int(transferibles) + 10)
 

@@ -21,3 +21,7 @@ def generador(n_simulaciones, dias_totales):
 
     return set_de_colas_por_replica
 
+
+generador1 = lambda x, y, z, d: x * 0.6 + y + z if d else y
+generador2 = lambda y, d: 0 if d else y
+generador3 = lambda z, d: z * 0.4 if d else z

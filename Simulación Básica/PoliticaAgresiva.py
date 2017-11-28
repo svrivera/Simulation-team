@@ -15,7 +15,7 @@ class Hospital(HospitalBase):
         self.cola_paciente = cola_paciente
         self.politica_hacia_intermedia = politica_hacia_intermedia
         self.politicas_llegadas_intermedias = politicas_llegadas_intermedias
-
+        self.p_intermedios = 0
 
 
     # ----------------------------------------------------------------------------
@@ -79,8 +79,8 @@ class Hospital(HospitalBase):
             # ------------------------------------------------------------------
             ## Transferencia HACIA Intermedia:
 
-            bajar_todo_critica(self)
-
+            bajar_todo_critica(self, boolean = False)
+            #print(self.disponibilidad_criticas)
             # ------------------------------------------------------------------
             # LLEGADA PACIENTES
 
@@ -127,8 +127,8 @@ class Hospital(HospitalBase):
 
                     camas_libres = self.camas_intermedias_libres
                     if len(camas_libres) > 0:
+                        self.p_intermedios += 1
                         recibir_todo_intermedia(self, paciente, camas_libres[0])
-
                     else:
                         # Si no hay camas libres, se externaliza
                         pacientes_externalizados_dia.append(paciente)

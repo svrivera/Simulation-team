@@ -38,7 +38,7 @@ def generador_llegadas(n_simulaciones, dias_totales):
     for replica in range(n_simulaciones):
         colas_por_dia = []
         for dia in range(dias_totales):
-
+            cola = None
             cola = generar_dia(set_colas[replica][dia], dia)
             colas_por_dia.append(cola)
 

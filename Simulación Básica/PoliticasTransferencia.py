@@ -86,13 +86,12 @@ def bajar_critica_basica(self):
 
 # BAJANDO DE CRITICA A INTERMEDIA
 
-def bajar_todo_critica(self, *args):
+def bajar_todo_critica(self, *args, boolean = True):
     while len(self.camas_intermedias_libres) > 0 and len(self.camas_criticas_transferible) > 0:
-        camas_libres = self.camas_intermedias_libres
         if len(self.camas_criticas_sin_penalizacion) > 0:
             cama_origen = self.camas_criticas_sin_penalizacion[0]
         else:
-            cama_origen = sorted(self.camas_criticas_transferible, key=lambda cama: cama.dias_recomendados, reverse = True)[0]
+            cama_origen = sorted(self.camas_criticas_transferible, key=lambda cama: cama.dias_recomendados, reverse = boolean)[0]
         cama_destino = self.camas_intermedias_libres[0]
         paciente = cama_origen.checkout()
 
